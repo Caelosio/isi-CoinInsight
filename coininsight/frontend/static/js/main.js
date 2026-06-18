@@ -135,7 +135,9 @@ function renderCryptoTable(cryptos) {
                 </td>
             </tr>
         `;
-        resultsCount.textContent = "0 resultados";
+        if (resultsCount) {
+            resultsCount.textContent = "0 resultados";
+        }
         return;
     }
 
@@ -182,7 +184,9 @@ function renderCryptoTable(cryptos) {
         tbody.appendChild(row);
     });
 
-    resultsCount.textContent = `Mostrando ${cryptos.length} criptomoneda${cryptos.length !== 1 ? "s" : ""}`;
+    if (resultsCount) {
+        resultsCount.textContent = `Mostrando ${cryptos.length} criptomoneda${cryptos.length !== 1 ? "s" : ""}`;
+    }
 }
 
 // --- Búsqueda (RF04) ---
