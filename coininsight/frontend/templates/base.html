@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,11 +21,13 @@
 
     {% block head_extra %}{% endblock %}
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark ci-navbar">
         <div class="container">
-            <a class="navbar-brand ci-brand" href="{% if current_user.is_authenticated %}{{ url_for('crypto.dashboard') }}{% else %}{{ url_for('auth.login') }}{% endif %}">
+            <a class="navbar-brand ci-brand"
+                href="{% if current_user.is_authenticated %}{{ url_for('crypto.dashboard') }}{% else %}{{ url_for('auth.login') }}{% endif %}">
                 <i class="bi bi-currency-bitcoin ci-brand-icon"></i>
                 CoinInsight
             </a>
@@ -81,15 +84,16 @@
     <!-- Flash messages -->
     <div class="container mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show ci-alert" role="alert">
-                    <i class="bi {{ 'bi-exclamation-triangle' if category == 'error' else 'bi-check-circle' }}"></i>
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                {% endfor %}
-            {% endif %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show ci-alert"
+            role="alert">
+            <i class="bi {{ 'bi-exclamation-triangle' if category == 'error' else 'bi-check-circle' }}"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
         {% endwith %}
     </div>
 
@@ -102,7 +106,7 @@
     <footer class="ci-footer">
         <div class="container text-center">
             <p class="mb-0">
-                <i class="bi bi-currency-bitcoin"></i> CoinInsight &copy; 2026 — Sprint 3
+                <i class="bi bi-currency-bitcoin"></i> CoinInsight &copy; 2026
             </p>
         </div>
     </footer>
@@ -112,4 +116,5 @@
 
     {% block scripts %}{% endblock %}
 </body>
+
 </html>

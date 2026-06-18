@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  coininsight_web:
+    build:
+      context: ./coininsight
+      dockerfile: Dockerfile
+    container_name: coininsight_web
+    ports:
+      - "5000:5000"
+    env_file:
+      # Si no existe .env, fallará, por eso es importante tener un .env
+      - ./coininsight/.env
+    volumes:
+      # Montamos la base de datos para persistir los datos aunque se borre el contenedor
+      - ./coininsight/backend/database:/app/backend/database
+    restart: unless-stopped
