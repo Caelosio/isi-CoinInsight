@@ -1,0 +1,564 @@
+/* ============================================
+   CoinInsight — Estilos personalizados
+   Stack: CSS3 + Bootstrap 5
+   ============================================ */
+
+/* --- Variables CSS --- */
+:root {
+    --ci-bg-primary: #0a0e17;
+    --ci-bg-secondary: #111827;
+    --ci-bg-card: #1a1f2e;
+    --ci-bg-card-hover: #222840;
+    --ci-bg-input: #1e2333;
+
+    --ci-accent: #f7931a;
+    --ci-accent-hover: #ffab40;
+    --ci-accent-glow: rgba(247, 147, 26, 0.25);
+
+    --ci-text-primary: #e8eaed;
+    --ci-text-secondary: #9ca3af;
+    --ci-text-muted: #6b7280;
+
+    --ci-green: #22c55e;
+    --ci-green-bg: rgba(34, 197, 94, 0.12);
+    --ci-red: #ef4444;
+    --ci-red-bg: rgba(239, 68, 68, 0.12);
+
+    --ci-border: #2a2f3e;
+    --ci-border-light: #374151;
+
+    --ci-radius: 12px;
+    --ci-radius-sm: 8px;
+    --ci-radius-lg: 16px;
+
+    --ci-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    --ci-shadow-glow: 0 0 30px rgba(247, 147, 26, 0.15);
+
+    --ci-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --ci-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* --- Reset & Base --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--ci-font);
+    background-color: var(--ci-bg-primary);
+    color: var(--ci-text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(ellipse at 20% 0%, rgba(247, 147, 26, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(99, 102, 241, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+main {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+/* --- Navbar --- */
+.ci-navbar {
+    background: rgba(17, 24, 39, 0.85) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--ci-border);
+    padding: 0.75rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.ci-brand {
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--ci-accent) !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--ci-transition);
+}
+
+.ci-brand:hover {
+    color: var(--ci-accent-hover) !important;
+    text-shadow: 0 0 20px var(--ci-accent-glow);
+}
+
+.ci-brand-icon {
+    font-size: 1.6rem;
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { filter: drop-shadow(0 0 4px var(--ci-accent-glow)); }
+    50% { filter: drop-shadow(0 0 12px var(--ci-accent-glow)); }
+}
+
+.ci-navbar .nav-link {
+    color: var(--ci-text-secondary) !important;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem !important;
+    border-radius: var(--ci-radius-sm);
+    transition: var(--ci-transition);
+}
+
+.ci-navbar .nav-link:hover {
+    color: var(--ci-text-primary) !important;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.ci-user-badge {
+    color: var(--ci-accent) !important;
+    font-weight: 600;
+}
+
+.ci-logout-btn:hover {
+    color: var(--ci-red) !important;
+}
+
+/* --- Auth Pages (Login / Registro) --- */
+.ci-auth-container {
+    min-height: calc(100vh - 200px);
+}
+
+.ci-auth-card {
+    background: var(--ci-bg-card);
+    border: 1px solid var(--ci-border);
+    border-radius: var(--ci-radius-lg);
+    padding: 2.5rem;
+    box-shadow: var(--ci-shadow);
+    animation: fadeSlideUp 0.5s ease-out;
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ci-auth-logo {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, var(--ci-accent), #ff6b00);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    box-shadow: var(--ci-shadow-glow);
+}
+
+.ci-auth-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--ci-text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.ci-auth-subtitle {
+    color: var(--ci-text-secondary);
+    font-size: 0.95rem;
+}
+
+.ci-label {
+    color: var(--ci-text-secondary);
+    font-weight: 500;
+    font-size: 0.875rem;
+    margin-bottom: 0.4rem;
+}
+
+.ci-input {
+    background: var(--ci-bg-input) !important;
+    border: 1px solid var(--ci-border) !important;
+    border-radius: var(--ci-radius-sm) !important;
+    color: var(--ci-text-primary) !important;
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+    transition: var(--ci-transition);
+}
+
+.ci-input:focus {
+    border-color: var(--ci-accent) !important;
+    box-shadow: 0 0 0 3px var(--ci-accent-glow) !important;
+    background: var(--ci-bg-secondary) !important;
+}
+
+.ci-input::placeholder {
+    color: var(--ci-text-muted) !important;
+}
+
+.ci-btn-primary {
+    background: linear-gradient(135deg, var(--ci-accent), #e07c00) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: 600;
+    padding: 0.7rem 1.5rem;
+    border-radius: var(--ci-radius-sm);
+    font-size: 0.95rem;
+    transition: var(--ci-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.ci-btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transition: left 0.5s ease;
+}
+
+.ci-btn-primary:hover::before {
+    left: 100%;
+}
+
+.ci-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(247, 147, 26, 0.35) !important;
+}
+
+.ci-btn-primary:active {
+    transform: translateY(0);
+}
+
+.ci-auth-link {
+    color: var(--ci-text-secondary);
+    font-size: 0.9rem;
+}
+
+.ci-auth-link a {
+    color: var(--ci-accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--ci-transition);
+}
+
+.ci-auth-link a:hover {
+    color: var(--ci-accent-hover);
+    text-decoration: underline;
+}
+
+/* --- Alerts --- */
+.ci-alert {
+    background: var(--ci-bg-card);
+    border: 1px solid var(--ci-border);
+    border-radius: var(--ci-radius-sm);
+    color: var(--ci-text-primary);
+    animation: fadeSlideUp 0.3s ease-out;
+}
+
+.alert-danger.ci-alert {
+    border-left: 4px solid var(--ci-red);
+}
+
+.alert-success.ci-alert {
+    border-left: 4px solid var(--ci-green);
+}
+
+/* --- Dashboard --- */
+.ci-dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.ci-page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--ci-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ci-page-title i {
+    color: var(--ci-accent);
+}
+
+.ci-page-subtitle {
+    color: var(--ci-text-secondary);
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
+}
+
+/* --- Search --- */
+.ci-search-wrapper {
+    position: relative;
+}
+
+.ci-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ci-text-muted);
+    font-size: 1rem;
+    z-index: 2;
+}
+
+.ci-search-input {
+    background: var(--ci-bg-input) !important;
+    border: 1px solid var(--ci-border) !important;
+    border-radius: var(--ci-radius) !important;
+    color: var(--ci-text-primary) !important;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    font-size: 0.95rem;
+    transition: var(--ci-transition);
+}
+
+.ci-search-input:focus {
+    border-color: var(--ci-accent) !important;
+    box-shadow: 0 0 0 3px var(--ci-accent-glow) !important;
+    background: var(--ci-bg-secondary) !important;
+}
+
+.ci-search-input::placeholder {
+    color: var(--ci-text-muted) !important;
+}
+
+/* --- Loading --- */
+.ci-loading {
+    text-align: center;
+    padding: 4rem 0;
+}
+
+.ci-spinner {
+    color: var(--ci-accent);
+    width: 3rem;
+    height: 3rem;
+}
+
+.ci-loading-text {
+    color: var(--ci-text-secondary);
+    margin-top: 1rem;
+    font-size: 0.95rem;
+}
+
+/* --- Error --- */
+.ci-error-container {
+    text-align: center;
+    padding: 4rem 0;
+}
+
+.ci-error-icon {
+    font-size: 3rem;
+    color: var(--ci-red);
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.ci-error-text {
+    color: var(--ci-text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+/* --- Table --- */
+.ci-table-card {
+    background: var(--ci-bg-card);
+    border: 1px solid var(--ci-border);
+    border-radius: var(--ci-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--ci-shadow);
+    animation: fadeSlideUp 0.5s ease-out;
+}
+
+.ci-table {
+    margin-bottom: 0;
+    color: var(--ci-text-primary);
+}
+
+.ci-table thead th {
+    background: var(--ci-bg-secondary);
+    color: var(--ci-text-secondary);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--ci-border);
+    white-space: nowrap;
+}
+
+.ci-table tbody tr {
+    border-bottom: 1px solid var(--ci-border);
+    transition: var(--ci-transition);
+    cursor: pointer;
+}
+
+.ci-table tbody tr:hover {
+    background: var(--ci-bg-card-hover);
+}
+
+.ci-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.ci-table tbody td {
+    padding: 0.9rem 1.25rem;
+    vertical-align: middle;
+    font-size: 0.92rem;
+    border: none;
+}
+
+/* Crypto row elements */
+.ci-crypto-name {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.ci-crypto-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.ci-crypto-name-text {
+    font-weight: 600;
+    color: var(--ci-text-primary);
+}
+
+.ci-crypto-symbol {
+    color: var(--ci-text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.ci-crypto-rank {
+    color: var(--ci-text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* Price change colors */
+.ci-change-positive {
+    color: var(--ci-green);
+    font-weight: 600;
+    background: var(--ci-green-bg);
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    display: inline-block;
+    font-size: 0.85rem;
+}
+
+.ci-change-negative {
+    color: var(--ci-red);
+    font-weight: 600;
+    background: var(--ci-red-bg);
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    display: inline-block;
+    font-size: 0.85rem;
+}
+
+.ci-price {
+    font-weight: 600;
+    color: var(--ci-text-primary);
+}
+
+.ci-volume,
+.ci-market-cap {
+    color: var(--ci-text-secondary);
+    font-weight: 500;
+}
+
+/* Results info */
+.ci-results-info {
+    text-align: center;
+    padding: 1rem;
+    color: var(--ci-text-muted);
+    font-size: 0.85rem;
+}
+
+/* --- Footer --- */
+.ci-footer {
+    background: var(--ci-bg-secondary);
+    border-top: 1px solid var(--ci-border);
+    padding: 1.5rem 0;
+    color: var(--ci-text-muted);
+    font-size: 0.85rem;
+    margin-top: auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .ci-auth-card {
+        padding: 1.75rem;
+        margin: 1rem;
+    }
+
+    .ci-page-title {
+        font-size: 1.4rem;
+    }
+
+    .ci-dashboard-header .col-md-6:last-child {
+        margin-top: 1rem;
+    }
+
+    .ci-table tbody td,
+    .ci-table thead th {
+        padding: 0.7rem 0.75rem;
+        font-size: 0.82rem;
+    }
+
+    .ci-crypto-icon {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* --- Scrollbar personalizado --- */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--ci-bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--ci-border-light);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--ci-text-muted);
+}
+
+/* --- Selection --- */
+::selection {
+    background: var(--ci-accent-glow);
+    color: var(--ci-text-primary);
+}

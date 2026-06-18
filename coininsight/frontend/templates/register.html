@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}CoinInsight — Registro{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center ci-auth-container">
+    <div class="col-md-5 col-lg-4">
+        <div class="ci-auth-card">
+            <!-- Logo -->
+            <div class="text-center mb-4">
+                <div class="ci-auth-logo">
+                    <i class="bi bi-person-plus-fill"></i>
+                </div>
+                <h1 class="ci-auth-title">Crear Cuenta</h1>
+                <p class="ci-auth-subtitle">Únete a CoinInsight</p>
+            </div>
+
+            <!-- Formulario de Registro (RF01) -->
+            <form method="POST" action="{{ url_for('auth.register') }}" id="register-form">
+                <div class="mb-3">
+                    <label for="username" class="form-label ci-label">
+                        <i class="bi bi-person"></i> Nombre de usuario
+                    </label>
+                    <input type="text"
+                           class="form-control ci-input"
+                           id="username"
+                           name="username"
+                           placeholder="Tu nombre"
+                           required
+                           autocomplete="username">
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label ci-label">
+                        <i class="bi bi-envelope"></i> Email
+                    </label>
+                    <input type="email"
+                           class="form-control ci-input"
+                           id="email"
+                           name="email"
+                           placeholder="tu@email.com"
+                           required
+                           autocomplete="email">
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label ci-label">
+                        <i class="bi bi-lock"></i> Contraseña
+                    </label>
+                    <input type="password"
+                           class="form-control ci-input"
+                           id="password"
+                           name="password"
+                           placeholder="••••••••"
+                           required
+                           minlength="6"
+                           autocomplete="new-password">
+                </div>
+
+                <button type="submit" class="btn ci-btn-primary w-100" id="register-submit">
+                    <i class="bi bi-person-plus"></i> Crear Cuenta
+                </button>
+            </form>
+
+            <!-- Link a login -->
+            <div class="text-center mt-4">
+                <p class="ci-auth-link">
+                    ¿Ya tienes cuenta?
+                    <a href="{{ url_for('auth.login') }}">Inicia sesión</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

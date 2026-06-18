@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}CoinInsight — Dashboard{% endblock %}
+
+{% block content %}
+<!-- Header del Dashboard -->
+<div class="ci-dashboard-header">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h1 class="ci-page-title">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </h1>
+            <p class="ci-page-subtitle">Top 20 criptomonedas en tiempo real</p>
+        </div>
+        <div class="col-md-6">
+            <!-- Barra de búsqueda (RF04) -->
+            <div class="ci-search-wrapper">
+                <i class="bi bi-search ci-search-icon"></i>
+                <input type="text"
+                       class="form-control ci-search-input"
+                       id="search-crypto"
+                       placeholder="Buscar criptomoneda por nombre..."
+                       autocomplete="off">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading spinner -->
+<div id="loading-spinner" class="ci-loading">
+    <div class="spinner-border ci-spinner" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="ci-loading-text">Cargando criptomonedas...</p>
+</div>
+
+<!-- Error message -->
+<div id="error-message" class="ci-error-container" style="display: none;">
+    <i class="bi bi-exclamation-triangle ci-error-icon"></i>
+    <p class="ci-error-text">No se pudieron cargar los datos. Intenta de nuevo.</p>
+    <button class="btn ci-btn-primary" onclick="loadCryptos()">
+        <i class="bi bi-arrow-clockwise"></i> Reintentar
+    </button>
+</div>
+
+<!-- Tabla de criptomonedas (RF03) -->
+<div id="crypto-table-container" style="display: none;">
+    <div class="ci-table-card">
+        <div class="table-responsive">
+            <table class="table ci-table" id="crypto-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Variación 24h</th>
+                        <th class="text-end">Market Cap</th>
+                        <th class="text-end">Volumen 24h</th>
+                    </tr>
+                </thead>
+                <tbody id="crypto-tbody">
+                    <!-- Se rellena dinámicamente con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Contador de resultados -->
+    <div class="ci-results-info">
+        <span id="results-count"></span>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
