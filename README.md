@@ -12,10 +12,9 @@ Sigue estos pasos exactos en tu terminal:
 
 ### 1. Clona el repositorio y entra en el proyecto
 ```bash
-git clone https://github.com/TU_USUARIO/isi-CoinInsight.git
+git clone https://github.com/Caelosio/isi-CoinInsight.git
 cd isi-CoinInsight
 ```
-*(Nota: Reemplaza la URL anterior por la URL real de tu repositorio si es diferente).*
 
 ### 2. Configura las variables de entorno
 Debes crear un archivo `.env` dentro de la carpeta `coininsight/` usando la plantilla de ejemplo.
