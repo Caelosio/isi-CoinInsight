@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}CoinInsight — Favoritos{% endblock %}
+
+{% block content %}
+<div class="ci-dashboard-header">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h1 class="ci-page-title">
+                <i class="bi bi-star"></i> Mis Favoritos
+            </h1>
+            <p class="ci-page-subtitle">Criptomonedas guardadas para seguimiento rápido</p>
+        </div>
+    </div>
+</div>
+
+<div id="loading-spinner" class="ci-loading" style="display: none;">
+    <div class="spinner-border ci-spinner" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+</div>
+
+<div id="error-message" class="ci-error-container" style="display: none;">
+    <i class="bi bi-exclamation-triangle ci-error-icon"></i>
+    <p class="ci-error-text">No se pudieron cargar tus favoritos.</p>
+</div>
+
+<div id="crypto-table-container">
+    <div class="ci-table-card">
+        <div class="table-responsive">
+            <table class="table ci-table" id="crypto-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Variación 24h</th>
+                        <th class="text-end">Market Cap</th>
+                    </tr>
+                </thead>
+                <tbody id="crypto-tbody">
+                    <!-- Dinámico -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="ci-results-info mt-3" id="no-favorites-msg" style="display: none;">
+        <i class="bi bi-star" style="font-size: 2rem; display: block; margin-bottom: 1rem; color: var(--ci-text-muted);"></i>
+        Aún no has guardado ninguna criptomoneda en favoritos.<br>
+        Explora el <a href="{{ url_for('crypto.dashboard') }}" style="color: var(--ci-accent);">Dashboard</a> para añadir algunas.
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async function() {
+    const spinner = document.getElementById("loading-spinner");
+    const errorMsg = document.getElementById("error-message");
+    const tbody = document.getElementById("crypto-tbody");
+    const tableContainer = document.querySelector(".ci-table-card");
+    const noFavsMsg = document.getElementById("no-favorites-msg");
+    
+    spinner.style.display = "block";
+    tableContainer.style.display = "none";
+    
+    try {
+        // 1. Obtener lista de IDs favoritos
+        const favRes = await fetch("/api/favorites");
+        if (!favRes.ok) throw new Error("Error al obtener favoritos");
+        const favData = await favRes.json();
+        const favIds = favData.favorites;
+        
+        if (favIds.length === 0) {
+            spinner.style.display = "none";
+            noFavsMsg.style.display = "block";
+            return;
+        }
+        
+        // 2. Obtener top cryptos para sacar datos (o podríamos consultar de una en una, pero get_top_cryptos es más rápido si están en el top)
+        // Para asegurar tener datos, haremos un get /api/cryptos general y filtraremos
+        const cryptosRes = await fetch("/api/cryptos");
+        if (!cryptosRes.ok) throw new Error("Error al obtener cryptos");
+        const cryptos = await cryptosRes.json();
+        
+        const favCryptos = cryptos.filter(c => favIds.includes(c.id));
+        
+        // Si hay cryptos favoritas que no estaban en el top 20, podríamos hacer peticiones extra, 
+        // pero por simplicidad para el sprint 3 usaremos filter sobre el top 20.
+        
+        if (favCryptos.length === 0) {
+            spinner.style.display = "none";
+            noFavsMsg.style.display = "block";
+            return;
+        }
+        
+        renderCryptoTable(favCryptos);
+        spinner.style.display = "none";
+        tableContainer.style.display = "block";
+        
+        // El main.js maneja el clic de la fila para redirigir (si está configurado)
+    } catch (e) {
+        console.error(e);
+        spinner.style.display = "none";
+        errorMsg.style.display = "block";
+    }
+});
+</script>
+{% endblock %}

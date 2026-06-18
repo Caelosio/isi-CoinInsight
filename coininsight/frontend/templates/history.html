@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}CoinInsight — Historial de Consultas{% endblock %}
+
+{% block content %}
+<div class="ci-dashboard-header">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h1 class="ci-page-title">
+                <i class="bi bi-clock-history"></i> Historial de Consultas
+            </h1>
+            <p class="ci-page-subtitle">Tus visitas recientes a detalles de criptomonedas</p>
+        </div>
+    </div>
+</div>
+
+<div id="loading-spinner" class="ci-loading" style="display: none;">
+    <div class="spinner-border ci-spinner" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+</div>
+
+<div id="error-message" class="ci-error-container" style="display: none;">
+    <i class="bi bi-exclamation-triangle ci-error-icon"></i>
+    <p class="ci-error-text">No se pudo cargar tu historial.</p>
+</div>
+
+<div id="history-table-container">
+    <div class="ci-table-card">
+        <div class="table-responsive">
+            <table class="table ci-table" id="history-table">
+                <thead>
+                    <tr>
+                        <th>Criptomoneda</th>
+                        <th>Fecha de Consulta</th>
+                        <th class="text-end">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="history-tbody">
+                    <!-- Dinámico -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="ci-results-info mt-3" id="no-history-msg" style="display: none;">
+        <i class="bi bi-clock" style="font-size: 2rem; display: block; margin-bottom: 1rem; color: var(--ci-text-muted);"></i>
+        Aún no tienes historial de consultas.<br>
+        Explora el <a href="{{ url_for('crypto.dashboard') }}" style="color: var(--ci-accent);">Dashboard</a> y entra al detalle de alguna criptomoneda.
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", async function() {
+    const spinner = document.getElementById("loading-spinner");
+    const errorMsg = document.getElementById("error-message");
+    const tbody = document.getElementById("history-tbody");
+    const tableContainer = document.querySelector(".ci-table-card");
+    const noHistoryMsg = document.getElementById("no-history-msg");
+    
+    spinner.style.display = "block";
+    tableContainer.style.display = "none";
+    
+    try {
+        const res = await fetch("/api/history");
+        if (!res.ok) throw new Error("Error al obtener historial");
+        const data = await res.json();
+        const history = data.history;
+        
+        if (history.length === 0) {
+            spinner.style.display = "none";
+            noHistoryMsg.style.display = "block";
+            return;
+        }
+        
+        tbody.innerHTML = "";
+        history.forEach(item => {
+            const row = document.createElement("tr");
+            const dateObj = new Date(item.fecha_consulta);
+            const dateStr = dateObj.toLocaleDateString() + " " + dateObj.toLocaleTimeString();
+            
+            row.innerHTML = `
+                <td>
+                    <div class="ci-crypto-name-text" style="text-transform: capitalize;">
+                        ${item.crypto_id}
+                    </div>
+                </td>
+                <td>
+                    <span class="ci-text-muted">${dateStr}</span>
+                </td>
+                <td class="text-end">
+                    <a href="/crypto/${item.crypto_id}" class="btn btn-sm btn-outline-secondary ci-btn-period">
+                        Ver Detalle <i class="bi bi-arrow-right"></i>
+                    </a>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        spinner.style.display = "none";
+        tableContainer.style.display = "block";
+    } catch (e) {
+        console.error(e);
+        spinner.style.display = "none";
+        errorMsg.style.display = "block";
+    }
+});
+</script>
+{% endblock %}

@@ -1,10 +1,18 @@
-# Agent.md - Sprint 2 - CoinInsight
+# Agent.md - Sprint 3 - CoinInsight
 
-## Contexto del proyecto
+## Contexto
 
-CoinInsight es una aplicación web que permite consultar información sobre criptomonedas utilizando datos obtenidos desde APIs externas y generar análisis automáticos mediante Inteligencia Artificial.
+CoinInsight es una aplicación web desarrollada con Flask que permite consultar información de criptomonedas utilizando APIs externas.
 
-El objetivo del Sprint 2 es construir un primer prototipo funcional que conecte frontend y backend, permita autenticación de usuarios y consulte información real de criptomonedas.
+Actualmente el proyecto ya dispone de:
+
+* Sistema de registro y login.
+* Dashboard principal.
+* Integración con CoinGecko.
+* Base de datos SQLite.
+* Estructura completa de backend y frontend.
+
+El objetivo del Sprint 3 es completar el producto y dejar una versión final funcional, visualmente atractiva y preparada para demostración.
 
 ---
 
@@ -16,7 +24,6 @@ El objetivo del Sprint 2 es construir un primer prototipo funcional que conecte 
 * Flask
 * SQLAlchemy
 * SQLite
-* Requests
 * Flask-Login
 * Flask-CORS
 
@@ -28,9 +35,9 @@ El objetivo del Sprint 2 es construir un primer prototipo funcional que conecte 
 * Bootstrap 5
 * Chart.js
 
-## APIs Externas
+## APIs
 
-### CoinGecko API
+### CoinGecko
 
 Obtención de:
 
@@ -38,253 +45,262 @@ Obtención de:
 * Precio actual
 * Capitalización
 * Volumen
-* Variación 24h
+* Variación porcentual
 * Histórico de precios
 
-### CryptoCompare API
+### Gemini
 
-Obtención de:
+Generación de análisis inteligentes.
 
-* Información complementaria
-* Datos históricos adicionales
+La API Key NO debe almacenarse en el código.
 
-### Gemini API
+Debe utilizarse un archivo:
 
-Generación de análisis automáticos para usuarios principiantes.
+.env
+
+y cargarse mediante variables de entorno.
 
 ---
 
-# Objetivos del Sprint 2
+# Objetivo Principal
 
-Implementar una primera versión funcional del sistema con:
+Convertir CoinInsight en una aplicación completamente funcional que permita:
 
-1. Registro de usuarios.
-2. Inicio de sesión.
-3. Dashboard principal.
-4. Consulta de criptomonedas.
-5. Visualización de datos básicos.
-6. Integración inicial con IA.
-7. Persistencia en base de datos.
+* Consultar criptomonedas.
+* Visualizar datos históricos.
+* Analizar tendencias mediante IA.
+* Gestionar favoritos.
+* Disfrutar de una experiencia visual moderna.
 
 ---
 
 # Requisitos Funcionales
 
-## RF01 - Registro
+## RF07 - Vista Detallada de Criptomoneda
 
-El usuario podrá:
+Cuando el usuario pulse sobre una criptomoneda del dashboard:
 
-* Crear una cuenta.
-* Introducir nombre.
-* Introducir email.
-* Introducir contraseña.
+Debe acceder a una página de detalle.
 
-La contraseña debe almacenarse mediante hash.
+Ruta sugerida:
 
----
+/crypto/<id>
 
-## RF02 - Login
-
-El usuario podrá:
-
-* Iniciar sesión.
-* Mantener sesión activa.
-* Cerrar sesión.
-
----
-
-## RF03 - Dashboard
-
-Tras iniciar sesión se mostrará:
-
-* Top 20 criptomonedas.
-* Precio actual.
-* Variación 24 horas.
-* Capitalización de mercado.
-
----
-
-## RF04 - Búsqueda
-
-El usuario podrá:
-
-* Buscar una criptomoneda por nombre.
-
-El sistema mostrará:
+La página debe mostrar:
 
 * Nombre.
 * Símbolo.
+* Imagen.
 * Precio actual.
+* Capitalización de mercado.
 * Volumen.
-* Market Cap.
-
----
-
-## RF05 - Detalle de criptomoneda
-
-El usuario podrá visualizar:
-
-* Precio actual.
 * Variación 24h.
-* Volumen.
-* Capitalización.
-* Gráfica histórica últimos 7 días.
-
-La gráfica debe implementarse con Chart.js.
+* Variación 7 días.
 
 ---
 
-## RF06 - Análisis IA
+## RF08 - Gráfica Histórica
 
-El usuario podrá pulsar:
+La página de detalle debe mostrar:
 
-"Generar análisis"
+Gráfica interactiva utilizando Chart.js.
 
-El backend enviará datos de la criptomoneda a Gemini.
+Periodo mínimo:
 
-Gemini devolverá:
+* Últimos 7 días.
 
-* Resumen sencillo.
-* Tendencia general.
-* Nivel de riesgo orientativo.
+Opcional:
 
----
+* 30 días.
+* 90 días.
 
-# Base de Datos
-
-## Tabla usuarios
-
-* id
-* username
-* email
-* password_hash
-
-## Tabla favoritos
-
-* id
-* user_id
-* crypto_id
-
-## Tabla historial
-
-* id
-* user_id
-* crypto_id
-* fecha_consulta
+Los datos deben obtenerse desde CoinGecko.
 
 ---
 
-# Endpoints Backend
+## RF09 - Análisis IA
 
-## Auth
+En la página de detalle debe existir un botón:
 
-POST /register
+"Analizar con IA"
 
-POST /login
+Al pulsarlo:
 
-GET /logout
+1. El backend obtiene los datos de la criptomoneda.
+2. Construye un prompt estructurado.
+3. Envía la información a Gemini.
+4. Devuelve una explicación comprensible.
 
----
+La respuesta debe incluir:
 
-## Criptomonedas
+* Resumen general.
+* Tendencia actual.
+* Riesgo orientativo.
+* Posibles factores relevantes.
 
-GET /api/cryptos
-
-Devuelve top criptomonedas.
-
-GET /api/crypto/<id>
-
-Devuelve información detallada.
-
-GET /api/crypto/<id>/history
-
-Devuelve histórico de precios.
+El lenguaje debe estar orientado a usuarios principiantes.
 
 ---
 
-## IA
+## RF10 - Gestión de Favoritos
 
-POST /api/analysis
+El usuario podrá:
 
-Entrada:
+* Añadir favoritos.
+* Eliminar favoritos.
+* Visualizar favoritos desde su cuenta.
 
-{
-"crypto": "bitcoin"
-}
-
-Salida:
-
-{
-"analysis": "Texto generado por Gemini"
-}
+Los favoritos deben almacenarse en SQLite.
 
 ---
 
-# Estructura de Carpetas
+## RF11 - Historial de Consultas
 
-coininsight/
+Cada vez que un usuario acceda a una criptomoneda:
 
-backend/
+Se almacenará:
 
-app.py
+* Usuario.
+* Criptomoneda.
+* Fecha.
 
-models/
-
-routes/
-
-services/
-
-database/
-
-frontend/
-
-templates/
-
-static/
-
-css/
-
-js/
-
-docs/
-
-README.md
-
-Agent.md
+Posteriormente se mostrará un historial básico.
 
 ---
 
+# Gestión de Variables de Entorno
+
+Crear archivo:
+
+.env
+
+Variables:
+
+GEMINI_API_KEY=
+SECRET_KEY=
+
+La aplicación debe utilizar python-dotenv.
+
+La clave Gemini nunca debe estar escrita directamente en el código.
+
+---
+
+# Mejoras Visuales
+
+## Dashboard
+
+Mejorar apariencia general utilizando Bootstrap.
+
+Objetivos:
+
+* Diseño moderno.
+* Tarjetas para cada criptomoneda.
+* Hover visual.
+* Adaptación responsive.
+
+---
+
+## Página de Detalle
+
+Diseño tipo dashboard financiero.
+
+Elementos:
+
+* Cabecera con imagen y nombre.
+* Tarjetas de métricas.
+* Gráfica destacada.
+* Panel de análisis IA.
+
+---
+
+## Paleta Visual
+
+Tema oscuro profesional.
+
+Inspiración:
+
+* Binance
+* CoinMarketCap
+* TradingView
+
+Mantener una estética limpia y minimalista.
+
+---
+
+# Requisitos Técnicos
+
+## Código
+
+* Mantener arquitectura actual.
+* Evitar duplicación de código.
+* Separar lógica de negocio en services.
+
+---
+
+## Servicios
+
+Crear:
+
+services/gemini_service.py
+
+Responsable de:
+
+* Construir prompts.
+* Conectar con Gemini.
+* Procesar respuestas.
+
+---
+
+## Seguridad
+
+* Contraseñas hasheadas.
+* API Keys fuera del repositorio.
+* .env incluido en .gitignore.
+
+---
 
 # Criterios de Aceptación
 
-* Registro funcional.
-* Login funcional.
-* Datos obtenidos desde CoinGecko.
-* Dashboard operativo.
-* Gráficas visibles.
-* Conexión con Gemini.
-* Persistencia en SQLite.
-* Frontend y backend integrados correctamente.
+La entrega Sprint 3 se considera completada cuando:
+
+✓ Login funcional.
+
+✓ Dashboard funcional.
+
+✓ Vista detallada de criptomonedas.
+
+✓ Gráficas históricas.
+
+✓ Integración Gemini operativa.
+
+✓ Favoritos funcionales.
+
+✓ Historial funcional.
+
+✓ Diseño responsive.
+
+✓ Uso de variables de entorno.
+
+✓ Aplicación preparada para demostración final.
 
 ---
 
 # Prioridad
 
-Alta:
+Prioridad Alta
 
-* Login.
-* Dashboard.
-* Consulta de criptomonedas.
+1. Integración Gemini.
+2. Vista detallada.
+3. Gráficas históricas.
 
-Media:
+Prioridad Media
 
-* Gráficas históricas.
-* Análisis IA.
+4. Favoritos.
+5. Historial.
 
-Baja:
+Prioridad Baja
 
-* Favoritos.
-* Historial.
-* Mejoras visuales.
+6. Mejoras visuales avanzadas.
+7. Animaciones y refinamientos UX.
 
-El objetivo principal es disponer de una aplicación navegable y funcional al finalizar el Sprint 2.
+El objetivo es disponer de una versión final estable, demostrable y visualmente atractiva para la presentación del proyecto.

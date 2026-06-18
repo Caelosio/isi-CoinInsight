@@ -5,7 +5,30 @@ from backend.config import Config
 # Timeout para peticiones HTTP (segundos)
 REQUEST_TIMEOUT = 10
 
+# Caché simple en memoria para evitar el rate-limiting de CoinGecko
+import time
+from functools import wraps
 
+def ttl_cache(ttl_seconds=60):
+    def decorator(func):
+        cache = {}
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            key = str(args) + str(kwargs)
+            now = time.time()
+            if key in cache:
+                result, timestamp = cache[key]
+                if now - timestamp < ttl_seconds:
+                    return result
+            result = func(*args, **kwargs)
+            if result:
+                cache[key] = (result, now)
+            return result
+        return wrapper
+    return decorator
+
+
+@ttl_cache(ttl_seconds=60)
 def get_top_cryptos(limit=20):
     """Obtiene las top criptomonedas desde CoinGecko.
 
@@ -27,6 +50,7 @@ def get_top_cryptos(limit=20):
         "per_page": limit,
         "page": 1,
         "sparkline": False,
+        "price_change_percentage": "24h,7d",
     }
 
     try:
@@ -38,6 +62,7 @@ def get_top_cryptos(limit=20):
         return []
 
 
+@ttl_cache(ttl_seconds=120)
 def get_crypto_detail(crypto_id):
     """Obtiene información detallada de una criptomoneda desde CoinGecko.
 
@@ -78,6 +103,9 @@ def get_crypto_detail(crypto_id):
             "price_change_percentage_24h": data.get("market_data", {}).get(
                 "price_change_percentage_24h", 0
             ),
+            "price_change_percentage_7d": data.get("market_data", {}).get(
+                "price_change_percentage_7d", 0
+            ),
             "description": data.get("description", {}).get("en", ""),
         }
     except requests.exceptions.RequestException as e:
@@ -85,6 +113,7 @@ def get_crypto_detail(crypto_id):
         return None
 
 
+@ttl_cache(ttl_seconds=300)
 def get_crypto_history(crypto_id, days=7):
     """Obtiene el histórico de precios de una criptomoneda.
 

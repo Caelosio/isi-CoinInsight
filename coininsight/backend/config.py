@@ -1,5 +1,10 @@
 import os
 
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde .env
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -18,8 +23,5 @@ class Config:
     # CoinGecko API (gratuita, sin API key)
     COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3"
 
-    # CryptoCompare API
-    CRYPTOCOMPARE_BASE_URL = "https://min-api.cryptocompare.com/data"
-
-    # Gemini API (se configurará en Phase 2)
+    # Gemini API — clave cargada desde .env
     GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")

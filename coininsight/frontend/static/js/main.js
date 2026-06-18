@@ -144,6 +144,10 @@ function renderCryptoTable(cryptos) {
 
         const row = document.createElement("tr");
         row.setAttribute("data-crypto-id", crypto.id);
+        row.style.cursor = "pointer";
+        row.addEventListener("click", () => {
+            window.location.href = `/crypto/${crypto.id}`;
+        });
         row.innerHTML = `
             <td>
                 <span class="ci-crypto-rank">${crypto.market_cap_rank || index + 1}</span>

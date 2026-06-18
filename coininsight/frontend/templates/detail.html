@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}CoinInsight — Detalle de Criptomoneda{% endblock %}
+
+{% block head_extra %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Loading spinner -->
+<div id="detail-loading" class="ci-loading">
+    <div class="spinner-border ci-spinner" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="ci-loading-text">Cargando detalle...</p>
+</div>
+
+<!-- Error message -->
+<div id="detail-error" class="ci-error-container" style="display: none;">
+    <i class="bi bi-exclamation-triangle ci-error-icon"></i>
+    <p class="ci-error-text">No se pudieron cargar los datos de la criptomoneda.</p>
+    <a href="{{ url_for('crypto.dashboard') }}" class="btn ci-btn-primary">
+        <i class="bi bi-arrow-left"></i> Volver al Dashboard
+    </a>
+</div>
+
+<!-- Detalle de criptomoneda -->
+<div id="detail-content" style="display: none;">
+    
+    <!-- Header: Nombre, imagen y botón favorito -->
+    <div class="ci-detail-header d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <a href="javascript:history.back()" class="btn ci-btn-icon" title="Volver atrás">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <img id="detail-image" src="" alt="Icono" class="ci-detail-icon" style="width: 50px; height: 50px; border-radius: 50%;">
+            <div>
+                <h1 class="ci-page-title mb-0" id="detail-name">Cargando...</h1>
+                <span class="badge bg-secondary ci-badge mt-1" id="detail-symbol"></span>
+            </div>
+        </div>
+        <button id="favorite-btn" class="btn ci-btn-icon" title="Añadir a favoritos" data-crypto-id="{{ crypto_id }}">
+            <i class="bi bi-star ci-fav-icon"></i>
+        </button>
+    </div>
+
+    <!-- Tarjetas de métricas -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="ci-metric-card">
+                <div class="ci-metric-title">Precio Actual</div>
+                <div class="ci-metric-value" id="detail-price">---</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="ci-metric-card">
+                <div class="ci-metric-title">Market Cap</div>
+                <div class="ci-metric-value" id="detail-market-cap">---</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="ci-metric-card">
+                <div class="ci-metric-title">Volumen 24h</div>
+                <div class="ci-metric-value" id="detail-volume">---</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="ci-metric-card">
+                <div class="ci-metric-title">Variación 24h / 7d</div>
+                <div class="ci-metric-value d-flex gap-2 align-items-center">
+                    <span id="detail-change-24h">---</span>
+                    <span class="text-muted" style="font-size: 0.8em;">/</span>
+                    <span id="detail-change-7d" style="font-size: 0.8em;">---</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Gráfica -->
+        <div class="col-lg-8">
+            <div class="ci-chart-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="ci-card-title m-0"><i class="bi bi-graph-up"></i> Histórico de Precios</h5>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-secondary ci-btn-period active" data-days="7">7D</button>
+                        <button type="button" class="btn btn-outline-secondary ci-btn-period" data-days="30">30D</button>
+                        <button type="button" class="btn btn-outline-secondary ci-btn-period" data-days="90">90D</button>
+                    </div>
+                </div>
+                <div style="height: 300px; position: relative;">
+                    <canvas id="cryptoChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Análisis IA -->
+        <div class="col-lg-4">
+            <div class="ci-ia-card h-100 d-flex flex-column">
+                <h5 class="ci-card-title"><i class="bi bi-robot"></i> Análisis Inteligente</h5>
+                <p class="ci-text-muted small">Generado por Gemini AI</p>
+                
+                <div class="mt-auto mb-auto text-center" id="ia-placeholder">
+                    <img src="{{ url_for('static', filename='img/ia-icon.svg') }}" alt="IA" style="width: 60px; opacity: 0.5; margin-bottom: 1rem;" onerror="this.style.display='none'">
+                    <p class="ci-text-muted">Obtén un resumen sencillo de la situación actual del mercado para esta criptomoneda.</p>
+                    <button class="btn ci-btn-primary mt-2" id="btn-analyze" data-crypto-id="{{ crypto_id }}">
+                        <i class="bi bi-magic"></i> Analizar con IA
+                    </button>
+                </div>
+
+                <div id="ia-loading" class="text-center my-4" style="display: none;">
+                    <div class="spinner-grow text-warning ci-spinner-sm" role="status">
+                        <span class="visually-hidden">Generando...</span>
+                    </div>
+                    <p class="mt-2 ci-text-muted">Generando análisis inteligente...</p>
+                </div>
+
+                <div id="ia-result" style="display: none;">
+                    <div class="ci-ia-section">
+                        <h6>Resumen</h6>
+                        <p id="ia-summary" class="small"></p>
+                    </div>
+                    <div class="ci-ia-section mt-3">
+                        <h6>Tendencia & Riesgo</h6>
+                        <div class="d-flex flex-column gap-2 mt-2">
+                            <div class="p-2 border rounded bg-dark text-light small" id="ia-trend"></div>
+                            <div class="p-2 border rounded bg-dark text-light small" id="ia-risk"></div>
+                        </div>
+                    </div>
+                    <div class="ci-ia-section mt-3">
+                        <h6>Factores a vigilar</h6>
+                        <p id="ia-factors" class="small mb-0" style="color: rgba(255, 255, 255, 0.85);"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Variable oculta para pasar el ID a JS -->
+<input type="hidden" id="current-crypto-id" value="{{ crypto_id }}">
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/detail.js') }}"></script>
+{% endblock %}

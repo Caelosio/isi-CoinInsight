@@ -42,6 +42,16 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('crypto.favorites_page') }}">
+                            <i class="bi bi-star"></i> Favoritos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('crypto.history_page') }}">
+                            <i class="bi bi-clock-history"></i> Historial
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <span class="nav-link ci-user-badge">
                             <i class="bi bi-person-circle"></i> {{ current_user.username }}
                         </span>
@@ -92,7 +102,7 @@
     <footer class="ci-footer">
         <div class="container text-center">
             <p class="mb-0">
-                <i class="bi bi-currency-bitcoin"></i> CoinInsight &copy; 2026 — Sprint 2
+                <i class="bi bi-currency-bitcoin"></i> CoinInsight &copy; 2026 — Sprint 3
             </p>
         </div>
     </footer>

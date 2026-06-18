@@ -512,6 +512,106 @@ main {
     z-index: 1;
 }
 
+/* --- Detalle de Criptomoneda --- */
+.ci-detail-icon {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    background: white;
+}
+
+.ci-badge {
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.ci-btn-icon {
+    background: var(--ci-bg-secondary);
+    border: 1px solid var(--ci-border);
+    color: var(--ci-text-secondary);
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: var(--ci-transition);
+}
+
+.ci-btn-icon:hover {
+    color: var(--ci-accent);
+    border-color: var(--ci-accent);
+    background: var(--ci-bg-card-hover);
+}
+
+/* --- Tarjetas de Métricas --- */
+.ci-metric-card {
+    background: var(--ci-bg-card);
+    border: 1px solid var(--ci-border);
+    border-radius: var(--ci-radius);
+    padding: 1.25rem;
+    box-shadow: var(--ci-shadow);
+}
+
+.ci-metric-title {
+    color: var(--ci-text-secondary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+.ci-metric-value {
+    color: var(--ci-text-primary);
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+/* --- Gráfica --- */
+.ci-chart-card {
+    background: var(--ci-bg-card);
+    border: 1px solid var(--ci-border);
+    border-radius: var(--ci-radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--ci-shadow);
+}
+
+.ci-btn-period {
+    color: var(--ci-text-secondary);
+    border-color: var(--ci-border);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.ci-btn-period:hover {
+    background: var(--ci-bg-secondary);
+    color: var(--ci-text-primary);
+}
+
+.ci-btn-period.active {
+    background: var(--ci-accent);
+    color: white;
+    border-color: var(--ci-accent);
+}
+
+/* --- Panel IA --- */
+.ci-ia-card {
+    background: linear-gradient(145deg, var(--ci-bg-card), var(--ci-bg-secondary));
+    border: 1px solid var(--ci-border);
+    border-radius: var(--ci-radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--ci-shadow), inset 0 0 20px rgba(247, 147, 26, 0.05);
+}
+
+.ci-ia-section h6 {
+    color: var(--ci-accent);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.5px;
+}
+
 /* --- Responsive --- */
 @media (max-width: 768px) {
     .ci-auth-card {
