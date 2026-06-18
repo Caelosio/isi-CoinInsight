@@ -2,7 +2,7 @@
 
 CoinInsight es una aplicación web que te permite monitorear el mercado de criptomonedas, gestionar tus favoritas y obtener análisis de mercado impulsados por la Inteligencia Artificial de Google Gemini.
 
-## 🚀 Inicio Rápido (Quickstart con Docker)
+## Quickstart con Docker
 
 Para probar el proyecto localmente de la forma más rápida y con los mínimos comandos, hemos preparado un entorno en Docker. 
 
@@ -28,19 +28,27 @@ cp coininsight/.env.example coininsight/.env
 Copy-Item coininsight\.env.example coininsight\.env
 ```
 
+**En Windows (CMD):**
+```cmd
+copy coininsight\.env.example coininsight\.env
+```
+
 Abre el archivo `coininsight/.env` que acabas de crear con cualquier editor de texto y coloca tu clave real de la API de Google Gemini en la variable `GEMINI_API_KEY`. (Si no la tienes, el análisis de IA fallará, pero el resto de la app funcionará).
 
 ### 3. Ejecuta la aplicación
-Lanza el sistema completo (Frontend, Backend y Base de datos) con un solo comando:
+Lanza el sistema completo con un solo comando:
 ```bash
 docker-compose up --build -d
 ```
 
-### 4. ¡Pruébalo!
+### 4. Pruébalo
 Abre tu navegador y entra a:
-👉 **http://localhost:5000**
+**http://localhost:5000**
 
 Ya puedes registrar un nuevo usuario e iniciar sesión para empezar a probar CoinInsight.
+También puedes iniciar sesion con las siguientes credenciales de prueba:
+Correo: admin@admin.com
+Contraseña: admin123
 
 ---
 
