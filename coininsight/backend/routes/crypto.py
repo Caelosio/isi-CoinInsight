@@ -46,6 +46,13 @@ def history_page():
     return render_template("history.html")
 
 
+@crypto_bp.route("/compare")
+@login_required
+def compare_page():
+    """Comparador de Criptomonedas con IA."""
+    return render_template("compare.html")
+
+
 # ==============================================================================
 # API Endpoints
 # ==============================================================================
@@ -104,6 +111,51 @@ def get_crypto_analysis():
         return jsonify({"error": "Error al generar el análisis de IA. Comprueba que GEMINI_API_KEY esté configurada."}), 500
         
     return jsonify(analysis)
+
+
+@crypto_bp.route("/api/compare", methods=["POST"])
+@login_required
+def compare_cryptos():
+    """POST /api/compare
+    
+    Entrada: {"crypto_a": "bitcoin", "crypto_b": "ethereum"}
+    Salida: Datos de ambas criptos + comparación de Gemini
+    """
+    data = request.get_json()
+    if not data or "crypto_a" not in data or "crypto_b" not in data:
+        return jsonify({"error": "Debes especificar dos criptomonedas."}), 400
+
+    crypto_a_id = data["crypto_a"]
+    crypto_b_id = data["crypto_b"]
+
+    if crypto_a_id == crypto_b_id:
+        return jsonify({"error": "Selecciona dos criptomonedas distintas."}), 400
+
+    # Obtener datos de ambas criptos
+    detail_a = coingecko.get_crypto_detail(crypto_a_id)
+    detail_b = coingecko.get_crypto_detail(crypto_b_id)
+
+    if not detail_a or not detail_b:
+        return jsonify({"error": "No se pudieron obtener los datos de una o ambas criptomonedas."}), 404
+
+    # Llamar a Gemini para la comparación
+    comparison = gemini_service.compare_cryptos(detail_a, detail_b)
+    if not comparison:
+        return jsonify({"error": "Error al generar la comparación de IA. Comprueba que GEMINI_API_KEY esté configurada."}), 500
+
+    # Registrar en historial
+    history_entry = History(
+        user_id=current_user.id,
+        crypto_id=f"compare:{crypto_a_id}-vs-{crypto_b_id}"
+    )
+    db.session.add(history_entry)
+    db.session.commit()
+
+    return jsonify({
+        "crypto_a": detail_a,
+        "crypto_b": detail_b,
+        "comparacion": comparison.get("comparacion", "")
+    })
 
 
 @crypto_bp.route("/api/favorites/<string:crypto_id>/status")

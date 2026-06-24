@@ -64,7 +64,7 @@ def create_app():
         # Crear un usuario por defecto si la base de datos está vacía
         if not User.query.first():
             default_user = User(username="admin", email="admin@admin.com")
-            default_user.set_password("admin")
+            default_user.set_password("admin123")
             db.session.add(default_user)
             db.session.commit()
             print("Usuario por defecto creado (Email: admin@admin.com, Password: admin)")

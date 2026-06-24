@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}CoinInsight — Comparador de Criptomonedas{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="ci-dashboard-header">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h1 class="ci-page-title">
+                <i class="bi bi-arrow-left-right"></i> Comparador
+            </h1>
+            <p class="ci-page-subtitle">Compara dos criptomonedas con análisis inteligente</p>
+        </div>
+    </div>
+</div>
+
+<!-- Selectores de criptomonedas -->
+<div class="ci-compare-selectors">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label for="select-crypto-a" class="ci-label">Moneda A</label>
+            <div class="ci-search-wrapper">
+                <i class="bi bi-currency-exchange ci-search-icon"></i>
+                <select id="select-crypto-a" class="form-select ci-select" disabled>
+                    <option value="">Cargando monedas...</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-1 text-center d-none d-md-block">
+            <div class="ci-compare-vs-badge">VS</div>
+        </div>
+
+        <div class="col-md-4">
+            <label for="select-crypto-b" class="ci-label">Moneda B</label>
+            <div class="ci-search-wrapper">
+                <i class="bi bi-currency-exchange ci-search-icon"></i>
+                <select id="select-crypto-b" class="form-select ci-select" disabled>
+                    <option value="">Cargando monedas...</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <button id="btn-compare" class="btn ci-btn-primary w-100" disabled>
+                <i class="bi bi-magic"></i> Comparar con IA
+            </button>
+        </div>
+    </div>
+
+    <!-- Aviso de misma moneda -->
+    <div id="same-coin-warning" class="ci-warning-msg" style="display: none;">
+        <i class="bi bi-exclamation-triangle"></i> Selecciona dos criptomonedas distintas para comparar.
+    </div>
+</div>
+
+<!-- Loading -->
+<div id="compare-loading" style="display: none;">
+    <div class="ci-loading">
+        <div class="spinner-grow text-warning ci-spinner-sm" role="status">
+            <span class="visually-hidden">Generando...</span>
+        </div>
+        <p class="ci-loading-text">Generando comparación inteligente...</p>
+    </div>
+</div>
+
+<!-- Error -->
+<div id="compare-error" class="ci-error-container" style="display: none;">
+    <i class="bi bi-exclamation-triangle ci-error-icon"></i>
+    <p class="ci-error-text" id="compare-error-text">Error al generar la comparación.</p>
+    <button class="btn ci-btn-primary" onclick="document.getElementById('compare-error').style.display='none'">
+        <i class="bi bi-arrow-clockwise"></i> Cerrar
+    </button>
+</div>
+
+<!-- Resultados -->
+<div id="compare-results" style="display: none;">
+
+    <!-- Tarjetas lado a lado -->
+    <div class="ci-compare-grid">
+        <!-- Moneda A -->
+        <div class="ci-compare-card" id="card-crypto-a">
+            <div class="ci-compare-card-header">
+                <img id="compare-img-a" src="" alt="" class="ci-compare-coin-icon">
+                <div>
+                    <div class="ci-compare-coin-name" id="compare-name-a">—</div>
+                    <span class="badge bg-secondary ci-badge" id="compare-symbol-a">—</span>
+                </div>
+            </div>
+            <div class="ci-compare-card-body">
+                <div class="ci-metric-row">
+                    <span class="ci-metric-title">Precio</span>
+                    <span class="ci-metric-value" id="compare-price-a">—</span>
+                </div>
+                <div class="ci-metric-row">
+                    <span class="ci-metric-title">Market Cap</span>
+                    <span class="ci-metric-value" id="compare-mcap-a">—</span>
+                </div>
+                <div class="ci-metric-row">
+                    <span class="ci-metric-title">Volumen 24h</span>
+                    <span class="ci-metric-value" id="compare-vol-a">—</span>
+                </div>
+                <div class="ci-metric-row">
+                    <span class="ci-metric-title">Variación 24h</span>
+                    <span class="ci-metric-value" id="compare-change24-a">—</span>
+                </div>
+                <div class="ci-metric-row">
+                    <span class="ci-metric-title">Variación 7d</span>
+                    <span class="ci-metric-value" id="compare-change7d-a">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- VS badge central (móvil) -->
+        <div class="ci-compare-vs-center">
+            <div class="ci-compare-vs-badge">VS</div>
+        </div>
+
+        <!-- Moneda B -->
+        <div class="ci-compare-card" id="card-crypto-b">
+            <div class="ci-compare-card-header">
+                <img id="compare-img-b" src="" alt="" class="ci-compare-coin-icon">
+                <div>
+                    <div class="ci-compare-coin-name" id="compare-name-b">—</div>
+                    <span class="badge bg-secondary ci-badge" id="compare-symbol-b">—</span>
+                </div>
+            </div>
+            <div class="ci-compare-card-body">
+                <div class="ci-metric-row">
+                    <span class="ci-metric-title">Precio</span>
+                    <span class="ci-metric-value" id="compare-price-b">—</span>
+                </div>
+                <div class="ci-metric-row">
+                    <span class="ci-metric-title">Market Cap</span>
+                    <span class="ci-metric-value" id="compare-mcap-b">—</span>
+                </div>
+                <div class="ci-metric-row">
+                    <span class="ci-metric-title">Volumen 24h</span>
+                    <span class="ci-metric-value" id="compare-vol-b">—</span>
+                </div>
+                <div class="ci-metric-row">
+                    <span class="ci-metric-title">Variación 24h</span>
+                    <span class="ci-metric-value" id="compare-change24-b">—</span>
+                </div>
+                <div class="ci-metric-row">
+                    <span class="ci-metric-title">Variación 7d</span>
+                    <span class="ci-metric-value" id="compare-change7d-b">—</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Análisis IA -->
+    <div class="ci-ia-card mt-4" id="compare-ia-section">
+        <h5 class="ci-card-title"><i class="bi bi-robot"></i> Comparación Inteligente</h5>
+        <p class="ci-text-muted small">Generado por Gemini AI</p>
+        <div id="compare-ia-text" class="ci-compare-result"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/compare.js') }}"></script>
+{% endblock %}
