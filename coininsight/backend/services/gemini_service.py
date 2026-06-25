@@ -11,20 +11,39 @@ class CryptoAnalysis(BaseModel):
     riesgo: str = Field(description="Alto, Medio, o Bajo.")
     factores: str = Field(description="Una frase mencionando posibles factores relevantes a vigilar.")
 
-def analyze_crypto(crypto_data):
-
-    print(f"DEBUG - API KEY CARGADA: {bool(Config.GEMINI_API_KEY)}")
+def analyze_crypto(crypto_data, level="intermedio"):
     """Genera un análisis de IA estructurado para una criptomoneda usando Gemini.
 
     Args:
         crypto_data (dict): Diccionario con los datos de la criptomoneda.
+        level (str): Nivel de explicación: "principiante", "intermedio" o "experto".
+                     Si se recibe un valor no reconocido, se usa "intermedio".
 
     Returns:
         dict: Diccionario con el análisis estructurado, o None si hay error.
     """
+    print(f"DEBUG - API KEY CARGADA: {bool(Config.GEMINI_API_KEY)}")
+
     if not Config.GEMINI_API_KEY:
         print("Error: GEMINI_API_KEY no configurada.")
         return None
+
+    # Instrucción de audiencia según nivel
+    LEVEL_INSTRUCTIONS = {
+        "principiante": (
+            "Explica como si la persona nunca ha invertido en nada, "
+            "evita jerga financiera, usa analogías sencillas."
+        ),
+        "intermedio": (
+            "Explica de forma clara y accesible para un usuario con conocimientos "
+            "básicos sobre inversión y criptomonedas."
+        ),
+        "experto": (
+            "Usa terminología técnica de mercados (soportes, resistencias, dominancia, "
+            "correlación con BTC, liquidez) y sé más conciso y directo."
+        ),
+    }
+    audience_instruction = LEVEL_INSTRUCTIONS.get(level, LEVEL_INSTRUCTIONS["intermedio"])
 
     try:
         # 2. Inicializamos el nuevo cliente con la API Key
@@ -38,7 +57,8 @@ def analyze_crypto(crypto_data):
         change_7d = crypto_data.get('price_change_percentage_7d', 0)
 
         prompt = f"""
-        Eres un analista financiero experto en criptomonedas. Explica a un usuario principiante la situación actual de {name}.
+        Eres un analista financiero experto en criptomonedas. Analiza la situación actual de {name}.
+        Audiencia: {audience_instruction}
         
         Datos actuales:
         - Precio: ${price}

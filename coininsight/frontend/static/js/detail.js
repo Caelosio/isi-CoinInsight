@@ -8,6 +8,9 @@
 
 let cryptoChartInstance = null;
 const cryptoId = document.getElementById("current-crypto-id").value;
+let selectedLevel = "intermedio";
+let currentPriceHistory = [];   // Array de [timestamp_ms, precio] del periodo activo
+let currentPrice = 0;           // Precio actual de la cripto (se actualiza en loadDetail)
 
 // --- Utilidades de formateo (reutilizadas de main.js conceptualmente) ---
 function formatPrice(value) {
@@ -46,6 +49,7 @@ async function loadDetail() {
         document.getElementById("detail-name").textContent = data.name;
         document.getElementById("detail-symbol").textContent = (data.symbol || "").toUpperCase();
         
+        currentPrice = data.current_price || 0;
         document.getElementById("detail-price").textContent = formatPrice(data.current_price);
         document.getElementById("detail-market-cap").textContent = formatLargeNumber(data.market_cap);
         document.getElementById("detail-volume").textContent = formatLargeNumber(data.total_volume);
@@ -126,6 +130,20 @@ async function loadChart(days) {
         const data = await res.json();
         
         const prices = data.prices || [];
+        currentPriceHistory = prices; // Guardar en módulo para el simulador
+
+        // Actualizar rango del input de fecha del simulador
+        const simDate = document.getElementById("sim-date");
+        if (simDate && prices.length >= 2) {
+            const toDateStr = ts => new Date(ts).toISOString().split("T")[0];
+            simDate.min = toDateStr(prices[0][0]);
+            simDate.max = toDateStr(prices[prices.length - 1][0]);
+        }
+        // Limpiar resultado previo del simulador al cambiar periodo
+        const simResult = document.getElementById("sim-result");
+        const simError  = document.getElementById("sim-error");
+        if (simResult) simResult.style.display = "none";
+        if (simError)  simError.style.display  = "none";
         const labels = prices.map(p => {
             const date = new Date(p[0]);
             return days <= 1 ? date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : date.toLocaleDateString();
@@ -195,6 +213,98 @@ async function loadChart(days) {
     }
 }
 
+// --- Simulador de inversión histórica ---
+function simulateInvestment() {
+    const simError  = document.getElementById("sim-error");
+    const simResult = document.getElementById("sim-result");
+
+    // Ocultar estados previos
+    simError.style.display  = "none";
+    simResult.style.display = "none";
+
+    const amount = parseFloat(document.getElementById("sim-amount").value);
+    const dateVal = document.getElementById("sim-date").value; // "YYYY-MM-DD"
+
+    // Validación
+    if (!amount || amount <= 0 || isNaN(amount)) {
+        simError.textContent = "Introduce una cantidad en USD mayor que 0.";
+        simError.style.display = "block";
+        return;
+    }
+    if (!dateVal) {
+        simError.textContent = "Selecciona una fecha dentro del rango disponible.";
+        simError.style.display = "block";
+        return;
+    }
+    if (currentPriceHistory.length === 0) {
+        simError.textContent = "No hay datos cargados para ese periodo, prueba a seleccionar un periodo más amplio (30D o 90D) primero.";
+        simError.style.display = "block";
+        return;
+    }
+
+    // Convertir fecha seleccionada a timestamp (interpretar como medianoche UTC
+    // para evitar desfases de zona horaria que desplazarían el día seleccionado)
+    const [y, m, d] = dateVal.split("-").map(Number);
+    const selectedTs = Date.UTC(y, m - 1, d);
+
+    // Validar que la fecha esté dentro del rango de datos cargados
+    const firstTs = currentPriceHistory[0][0];
+    const lastTs  = currentPriceHistory[currentPriceHistory.length - 1][0];
+    if (selectedTs < firstTs || selectedTs > lastTs) {
+        const fmt = ts => new Date(ts).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
+        simError.textContent =
+            `La fecha seleccionada está fuera del periodo disponible (${fmt(firstTs)} – ${fmt(lastTs)}). ` +
+            `Selecciona un periodo más amplio (30D o 90D) para acceder a más fechas.`;
+        simError.style.display = "block";
+        return;
+    }
+
+    // Buscar el punto más próximo en el historial
+    const closest = currentPriceHistory.reduce((best, point) => {
+        return Math.abs(point[0] - selectedTs) < Math.abs(best[0] - selectedTs) ? point : best;
+    });
+
+    const priceAtDate = closest[1];
+    if (!priceAtDate || priceAtDate <= 0) {
+        simError.textContent = "No se encontró un precio válido para esa fecha. Prueba otra fecha.";
+        simError.style.display = "block";
+        return;
+    }
+
+    // Precio "actual" de referencia: usar el último punto del historial cargado
+    // (mismo origen de datos que el gráfico, coherente con lo que el usuario ve).
+    // Si currentPrice (API) está disponible y parece válido, usarlo como fallback.
+    const lastHistoryPrice = currentPriceHistory[currentPriceHistory.length - 1][1];
+    const refPrice = (currentPrice && currentPrice > 0) ? currentPrice : lastHistoryPrice;
+
+    if (!refPrice || refPrice <= 0) {
+        simError.textContent = "No se pudo obtener el precio actual. Recarga la página e inténtalo de nuevo.";
+        simError.style.display = "block";
+        return;
+    }
+
+    // Cálculos
+    const coins    = amount / priceAtDate;
+    const valueNow = coins * refPrice;
+    const roi      = ((valueNow - amount) / amount) * 100;
+
+    // Renderizar
+    document.getElementById("sim-coins").textContent = coins.toFixed(6);
+    document.getElementById("sim-value").textContent = formatPrice(valueNow);
+    const roiEl = document.getElementById("sim-roi");
+    roiEl.textContent = formatChangeText(roi);
+    roiEl.className   = "sim-roi-value fw-bold " + formatChangeClass(roi);
+
+    // Mostrar precios de referencia para transparencia
+    const simPriceInfo = document.getElementById("sim-price-info");
+    if (simPriceInfo) {
+        simPriceInfo.textContent =
+            `Precio de compra: ${formatPrice(priceAtDate)}  ·  Precio actual: ${formatPrice(refPrice)}`;
+    }
+
+    simResult.style.display = "block";
+}
+
 // --- Análisis IA ---
 async function analyzeCrypto() {
     const loading = document.getElementById("ia-loading");
@@ -209,7 +319,7 @@ async function analyzeCrypto() {
         const res = await fetch("/api/analysis", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ crypto: cryptoId })
+            body: JSON.stringify({ crypto: cryptoId, level: selectedLevel })
         });
         
         const data = await res.json();
@@ -247,11 +357,38 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("favorite-btn").addEventListener("click", toggleFavorite);
     document.getElementById("btn-analyze").addEventListener("click", analyzeCrypto);
     
+    // Selector de periodo del gráfico
     document.querySelectorAll(".ci-btn-period").forEach(btn => {
         btn.addEventListener("click", (e) => {
             document.querySelectorAll(".ci-btn-period").forEach(b => b.classList.remove("active"));
             e.target.classList.add("active");
             loadChart(e.target.getAttribute("data-days"));
+        });
+    });
+
+    // Selector de nivel de explicación de IA
+    document.querySelectorAll(".ci-btn-level").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const clickedLevel = e.currentTarget.getAttribute("data-level");
+            // Actualizar estado y sincronizar TODOS los botones de nivel (en placeholder y en result)
+            document.querySelectorAll(".ci-btn-level").forEach(b => {
+                b.classList.toggle("active", b.getAttribute("data-level") === clickedLevel);
+            });
+            selectedLevel = clickedLevel;
+            // Si ya hay resultado visible, lanzar nuevo análisis automáticamente
+            if (document.getElementById("ia-result").style.display !== "none") {
+                analyzeCrypto();
+            }
+        });
+    });
+
+    // Simulador de inversión histórica
+    document.getElementById("btn-simulate").addEventListener("click", simulateInvestment);
+
+    // Disparar simulación también con Enter en los inputs del simulador
+    ["sim-amount", "sim-date"].forEach(id => {
+        document.getElementById(id).addEventListener("keydown", (e) => {
+            if (e.key === "Enter") simulateInvestment();
         });
     });
 });

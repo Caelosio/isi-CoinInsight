@@ -104,6 +104,16 @@
                 <div class="mt-auto mb-auto text-center" id="ia-placeholder">
                     <img src="{{ url_for('static', filename='img/ia-icon.svg') }}" alt="IA" style="width: 60px; opacity: 0.5; margin-bottom: 1rem;" onerror="this.style.display='none'">
                     <p class="ci-text-muted">Obtén un resumen sencillo de la situación actual del mercado para esta criptomoneda.</p>
+
+                    <!-- Selector de nivel de explicación -->
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Nivel de explicación">
+                            <button type="button" class="btn ci-btn-level" data-level="principiante">Principiante</button>
+                            <button type="button" class="btn ci-btn-level active" data-level="intermedio">Intermedio</button>
+                            <button type="button" class="btn ci-btn-level" data-level="experto">Experto</button>
+                        </div>
+                    </div>
+
                     <button class="btn ci-btn-primary mt-2" id="btn-analyze" data-crypto-id="{{ crypto_id }}">
                         <i class="bi bi-magic"></i> Analizar con IA
                     </button>
@@ -117,6 +127,14 @@
                 </div>
 
                 <div id="ia-result" style="display: none;">
+                    <!-- Selector de nivel visible también en el resultado -->
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Nivel de explicación">
+                            <button type="button" class="btn ci-btn-level" data-level="principiante">Principiante</button>
+                            <button type="button" class="btn ci-btn-level active" data-level="intermedio">Intermedio</button>
+                            <button type="button" class="btn ci-btn-level" data-level="experto">Experto</button>
+                        </div>
+                    </div>
                     <div class="ci-ia-section">
                         <h6>Resumen</h6>
                         <p id="ia-summary" class="small"></p>
@@ -132,6 +150,71 @@
                         <h6>Factores a vigilar</h6>
                         <p id="ia-factors" class="small mb-0" style="color: rgba(255, 255, 255, 0.85);"></p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simulador de inversión histórica -->
+    <div class="row g-4 mt-2">
+        <div class="col-12">
+            <div class="ci-chart-card">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <h5 class="ci-card-title m-0"><i class="bi bi-calculator"></i> ¿Y si hubiera invertido?</h5>
+                </div>
+                <p class="ci-text-muted small mb-3">
+                    Calcula cuánto valdría hoy una inversión pasada usando el histórico cargado arriba.
+                    Cambia el periodo del gráfico (7D / 30D / 90D) para ampliar el rango de fechas disponibles.
+                </p>
+
+                <!-- Formulario en línea -->
+                <div class="row g-3 align-items-end">
+                    <div class="col-sm-4 col-md-3">
+                        <label for="sim-amount" class="form-label small ci-text-muted mb-1">Cantidad invertida (USD)</label>
+                        <input type="number" id="sim-amount" class="form-control ci-input"
+                               placeholder="Ej: 1000" min="1" step="any">
+                    </div>
+                    <div class="col-sm-4 col-md-3">
+                        <label for="sim-date" class="form-label small ci-text-muted mb-1">Fecha de compra</label>
+                        <input type="date" id="sim-date" class="form-control ci-input">
+                    </div>
+                    <div class="col-sm-4 col-md-2">
+                        <button id="btn-simulate" class="btn ci-btn-primary w-100">
+                            <i class="bi bi-play-fill"></i> Calcular
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mensaje de error de validación -->
+                <div id="sim-error" class="alert mt-3 mb-0 py-2 px-3 small"
+                     style="display:none; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: var(--ci-red); border-radius: var(--ci-radius-sm);">
+                </div>
+
+                <!-- Resultado -->
+                <div id="sim-result" style="display:none;" class="mt-4">
+                    <div class="row g-3">
+                        <div class="col-sm-4">
+                            <div class="ci-metric-card text-center">
+                                <div class="ci-metric-title">Monedas compradas</div>
+                                <div class="ci-metric-value" id="sim-coins">—</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="ci-metric-card text-center">
+                                <div class="ci-metric-title">Valor actual</div>
+                                <div class="ci-metric-value" id="sim-value">—</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="ci-metric-card text-center">
+                                <div class="ci-metric-title">Rentabilidad</div>
+                                <div class="ci-metric-value">
+                                    <span id="sim-roi" class="sim-roi-value fw-bold">—</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p id="sim-price-info" class="text-center mt-2 mb-0 small ci-text-muted"></p>
                 </div>
             </div>
         </div>

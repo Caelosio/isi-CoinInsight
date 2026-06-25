@@ -99,6 +99,7 @@ def get_crypto_analysis():
         return jsonify({"error": "Criptomoneda no especificada"}), 400
         
     crypto_id = data["crypto"]
+    level = data.get("level", "intermedio")
     
     # Obtener datos de la cripto para el prompt
     detail = coingecko.get_crypto_detail(crypto_id)
@@ -106,7 +107,7 @@ def get_crypto_analysis():
         return jsonify({"error": "No se pudieron obtener datos de la criptomoneda para el análisis"}), 404
         
     # Llamar a Gemini
-    analysis = gemini_service.analyze_crypto(detail)
+    analysis = gemini_service.analyze_crypto(detail, level=level)
     if not analysis:
         return jsonify({"error": "Error al generar el análisis de IA. Comprueba que GEMINI_API_KEY esté configurada."}), 500
         

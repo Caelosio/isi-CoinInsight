@@ -594,6 +594,29 @@ main {
     border-color: var(--ci-accent);
 }
 
+/* --- Selector de nivel de análisis IA --- */
+.ci-btn-level {
+    background: transparent;
+    color: var(--ci-text-secondary);
+    border-color: var(--ci-border);
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: var(--ci-transition);
+}
+
+.ci-btn-level:hover {
+    background: var(--ci-bg-secondary);
+    color: var(--ci-text-primary);
+    border-color: var(--ci-border-light);
+}
+
+.ci-btn-level.active {
+    background: var(--ci-accent);
+    color: #fff;
+    border-color: var(--ci-accent);
+    box-shadow: 0 0 8px var(--ci-accent-glow);
+}
+
 /* --- Panel IA --- */
 .ci-ia-card {
     background: linear-gradient(145deg, var(--ci-bg-card), var(--ci-bg-secondary));
