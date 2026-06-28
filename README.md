@@ -2,7 +2,7 @@
 
 CoinInsight es una aplicación web que te permite monitorear el mercado de criptomonedas, gestionar tus favoritas y obtener análisis de mercado impulsados por la Inteligencia Artificial de Google Gemini.
 
-## Quickstart con Docker
+## 🚀 Inicio Rápido (Quickstart con Docker)
 
 Para probar el proyecto localmente de la forma más rápida y con los mínimos comandos, hemos preparado un entorno en Docker. 
 
@@ -28,27 +28,41 @@ cp coininsight/.env.example coininsight/.env
 Copy-Item coininsight\.env.example coininsight\.env
 ```
 
-**En Windows (CMD):**
-```cmd
-copy coininsight\.env.example coininsight\.env
-```
+Abre el archivo `coininsight/.env` que acabas de crear con cualquier editor de texto y configura las claves de API:
 
-Abre el archivo `coininsight/.env` que acabas de crear con cualquier editor de texto y coloca tu clave real de la API de Google Gemini en la variable `GEMINI_API_KEY`. (Si no la tienes, el análisis de IA fallará, pero el resto de la app funcionará).
+#### 🔑 Obtener la API Key de Google Gemini (obligatoria para análisis IA)
+
+1. Ve a [Google AI Studio](https://aistudio.google.com/apikey).
+2. Inicia sesión con tu cuenta de Google.
+3. Haz clic en **"Create API Key"** y selecciona un proyecto (o crea uno nuevo).
+4. Copia la clave generada y pégala en tu `.env`:
+   ```
+   GEMINI_API_KEY=tu_clave_de_gemini
+   ```
+> Si no la configuras, el análisis de IA no funcionará, pero el resto de la app seguirá operativa.
+
+#### 📰 Obtener la API Key de NewsAPI (opcional, para noticias)
+
+1. Ve a [newsapi.org](https://newsapi.org/) y haz clic en **"Get API Key"**.
+2. Regístrate con tu email (el plan gratuito incluye 100 peticiones/día).
+3. Una vez registrado, encontrarás tu API Key en el panel de tu cuenta.
+4. Copia la clave y pégala en tu `.env`:
+   ```
+   NEWSAPI_KEY=tu_clave_de_newsapi
+   ```
+> Si no la configuras, la sección de noticias en la vista de detalle simplemente no mostrará resultados.
 
 ### 3. Ejecuta la aplicación
-Lanza el sistema completo con un solo comando:
+Lanza el sistema completo (Frontend, Backend y Base de datos) con un solo comando:
 ```bash
 docker-compose up --build -d
 ```
 
-### 4. Pruébalo
+### 4. ¡Pruébalo!
 Abre tu navegador y entra a:
-**http://localhost:5000**
+👉 **http://localhost:5000**
 
 Ya puedes registrar un nuevo usuario e iniciar sesión para empezar a probar CoinInsight.
-También puedes iniciar sesion con las siguientes credenciales de prueba:
-Correo: admin@admin.com
-Contraseña: admin123
 
 ---
 
