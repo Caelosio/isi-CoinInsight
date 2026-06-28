@@ -219,6 +219,33 @@
             </div>
         </div>
     </div>
+
+    <!-- Noticias recientes -->
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="ci-chart-card">
+                <h5 class="ci-card-title">
+                    <i class="bi bi-newspaper"></i> Noticias Recientes
+                </h5>
+                <p class="ci-text-muted small">Últimas noticias en inglés sobre esta criptomoneda</p>
+
+                <div id="news-loading" style="display: none;">
+                    <div class="spinner-grow text-warning ci-spinner-sm" role="status">
+                        <span class="visually-hidden">Cargando noticias...</span>
+                    </div>
+                    <p class="mt-2 ci-text-muted">Cargando noticias...</p>
+                </div>
+
+                <div id="news-list" style="display: none;">
+                    <!-- Las noticias se inyectarán aquí con JS -->
+                </div>
+
+                <div id="news-empty" style="display: none;">
+                    <p class="ci-text-muted text-center my-3">No hay noticias disponibles en este momento.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Variable oculta para pasar el ID a JS -->

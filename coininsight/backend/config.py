@@ -25,3 +25,7 @@ class Config:
 
     # Gemini API — clave cargada desde .env
     GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+
+    # NewsAPI — clave cargada desde .env, plan gratuito: 100 req/día
+    NEWS_API_KEY = os.environ.get("NEWSAPI_KEY", "")
+    NEWS_API_BASE_URL = "https://newsapi.org/v2"

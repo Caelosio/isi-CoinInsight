@@ -6,6 +6,7 @@ from backend.models.favorite import Favorite
 from backend.models.history import History
 from backend.services import coingecko
 from backend.services import gemini_service
+from backend.services import news_service
 
 crypto_bp = Blueprint("crypto", __name__)
 
@@ -84,6 +85,24 @@ def get_crypto_history(crypto_id):
     if history is None:
         return jsonify({"error": "No se pudo obtener el histórico"}), 404
     return jsonify(history)
+
+
+@crypto_bp.route("/api/crypto/<string:crypto_id>/news")
+@login_required
+def get_crypto_news(crypto_id):
+    """GET /api/crypto/<id>/news — Noticias recientes sobre la criptomoneda."""
+    limit = request.args.get("limit", 5, type=int)
+    limit = min(limit, 10)  # Máximo 10 artículos
+
+    # Obtener el nombre de la criptomoneda para buscar noticias
+    detail = coingecko.get_crypto_detail(crypto_id)
+    if detail is None:
+        return jsonify({"error": "Criptomoneda no encontrada"}), 404
+
+    crypto_name = detail.get("name", crypto_id)
+    articles = news_service.get_crypto_news(crypto_name, limit=limit)
+
+    return jsonify({"news": articles, "count": len(articles)})
 
 
 @crypto_bp.route("/api/analysis", methods=["POST"])

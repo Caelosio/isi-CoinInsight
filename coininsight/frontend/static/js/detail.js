@@ -68,6 +68,7 @@ async function loadDetail() {
         // Cargar fav y chart después de mostrar contenido
         checkFavoriteStatus();
         loadChart(7);
+        loadNews();
     } catch (e) {
         console.error(e);
         loading.style.display = "none";
@@ -303,6 +304,86 @@ function simulateInvestment() {
     }
 
     simResult.style.display = "block";
+}
+
+// --- Noticias ---
+function formatTimeAgo(dateString) {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffMs = now - date;
+    const diffMinutes = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    const diffMonths = Math.floor(diffDays / 30);
+
+    if (diffMinutes < 60) return `hace ${diffMinutes} min`;
+    if (diffHours < 24) return `hace ${diffHours}h`;
+    if (diffDays < 30) return `hace ${diffDays} día${diffDays > 1 ? 's' : ''}`;
+    if (diffMonths < 12) return `hace ${diffMonths} mes${diffMonths > 1 ? 'es' : ''}`;
+    return new Date(dateString).toLocaleDateString('es-ES');
+}
+
+async function loadNews() {
+    const loading = document.getElementById("news-loading");
+    const newsList = document.getElementById("news-list");
+    const empty = document.getElementById("news-empty");
+
+    loading.style.display = "block";
+    newsList.style.display = "none";
+    empty.style.display = "none";
+
+    try {
+        const res = await fetch(`/api/crypto/${cryptoId}/news`);
+        if (!res.ok) throw new Error("Error fetching news");
+        const data = await res.json();
+
+        loading.style.display = "none";
+
+        if (!data.news || data.count === 0) {
+            empty.style.display = "block";
+            return;
+        }
+
+        newsList.innerHTML = "";
+        data.news.forEach(article => {
+            const title = article.title.length > 100
+                ? article.title.substring(0, 100) + "..."
+                : article.title;
+            const dateFormatted = formatTimeAgo(article.publishedAt);
+
+            const card = document.createElement("div");
+            card.className = "news-card mb-3 p-3";
+            card.style.cssText = "border: 1px solid var(--ci-border); border-radius: var(--ci-radius-sm); background: var(--ci-bg-input); transition: var(--ci-transition);";
+            card.addEventListener("mouseenter", () => { card.style.borderColor = "var(--ci-border-light)"; });
+            card.addEventListener("mouseleave", () => { card.style.borderColor = "var(--ci-border)"; });
+
+            card.innerHTML = `
+                <div class="row g-3 align-items-start">
+                    <div class="col-auto" style="width: 80px; height: 80px; overflow: hidden; border-radius: var(--ci-radius-sm);">
+                        <img src="${article.image}" alt="${article.source}"
+                             style="width: 100%; height: 100%; object-fit: cover;"
+                             onerror="this.src='https://via.placeholder.com/80x80?text=News'">
+                    </div>
+                    <div class="col">
+                        <h6 class="mb-1" style="color: var(--ci-text-primary);">${title}</h6>
+                        <p class="ci-text-muted small mb-2">${article.source} • ${dateFormatted}</p>
+                        <a href="${article.url}" target="_blank" rel="noopener noreferrer"
+                           class="btn btn-sm btn-outline-secondary"
+                           style="color: var(--ci-accent); border-color: var(--ci-accent); font-size: 0.8rem;">
+                            Leer más <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+            newsList.appendChild(card);
+        });
+
+        newsList.style.display = "block";
+    } catch (e) {
+        console.error("Error loading news", e);
+        loading.style.display = "none";
+        empty.style.display = "block";
+    }
 }
 
 // --- Análisis IA ---
