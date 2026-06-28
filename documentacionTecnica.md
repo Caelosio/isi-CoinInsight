@@ -28,16 +28,25 @@ El sistema implementa un patrón **Modelo-Vista-Controlador (MVC)** utilizando *
 
 ## 3. Integración con Servicios Externos (APIs)
 
-CoinInsight depende de dos servicios externos principales ubicados en el módulo `backend.services`:
+CoinInsight depende de tres servicios externos ubicados en el módulo `backend.services`:
 
 1. **CoinGecko API** (`coingecko.py`)
    - **Propósito**: Obtener datos de mercado en tiempo real, histórico de precios y detalles de las criptomonedas.
    - **Endpoints consumidos**: `/coins/markets`, `/coins/{id}`, `/coins/{id}/market_chart`.
-   - **Nota**: Se recomienda implementar una caché o manejar los límites de peticiones (rate limiting) de CoinGecko si aumenta el tráfico.
+   - **Caché**: TTL de 60-300 s según el endpoint para evitar rate-limiting.
+   - **Nota**: API gratuita, sin API key requerida.
 
 2. **Google Gemini API** (`gemini_service.py`)
    - **Propósito**: Generar un análisis inteligente y recomendaciones basadas en los datos actuales de la criptomoneda.
    - **Requisito**: Necesita la variable de entorno `GEMINI_API_KEY`.
+
+3. **NewsAPI** (`news_service.py`)
+   - **Propósito**: Obtener noticias recientes y relevantes sobre cada criptomoneda, mostradas en la página de detalle.
+   - **Endpoint consumido**: `GET /v2/everything?q={nombre}&sortBy=publishedAt&language=en&pageSize={limit}`.
+   - **Autenticación**: Header `Authorization: Bearer {NEWSAPI_KEY}`.
+   - **Caché**: TTL de 3600 s (1 hora), ya que las noticias cambian con menor frecuencia que los precios.
+   - **Requisito**: Variable de entorno `NEWSAPI_KEY` (plan gratuito: 100 peticiones/día).
+   - **Resiliencia**: Si la API key no está configurada, si hay error 401 (clave inválida) o 429 (límite alcanzado), el servicio retorna una lista vacía sin romper la aplicación.
 
 ---
 
@@ -84,6 +93,7 @@ Todos los endpoints (excepto Auth) requieren que el usuario esté autenticado (`
 - `GET /api/cryptos`: Retorna las top 20 criptomonedas (CoinGecko).
 - `GET /api/crypto/<crypto_id>`: Detalles específicos de una moneda.
 - `GET /api/crypto/<crypto_id>/history?days=<n>`: Histórico de precios.
+- `GET /api/crypto/<crypto_id>/news?limit=<n>`: Noticias recientes sobre la criptomoneda (NewsAPI). Parámetro `limit` opcional (default 5, máximo 10). Retorna `{"news": [...], "count": N}`.
 - `POST /api/analysis`: Genera y retorna el análisis de Gemini. Espera el body: `{"crypto": "id"}`.
 
 ### API de Interacción de Usuario (`crypto.py`)
@@ -117,12 +127,14 @@ Todos los endpoints (excepto Auth) requieren que el usuario esté autenticado (`
    ```
 
 4. **Variables de entorno**:
-   - Crear un archivo `.env` en la raíz de `coininsight`.
+   - Crear un archivo `.env` en la raíz de `coininsight` (ver `.env.example` como plantilla).
    - Añadir:
      ```env
      SECRET_KEY=tu_clave_secreta_aqui
      GEMINI_API_KEY=tu_clave_de_gemini
+     NEWSAPI_KEY=tu_clave_de_newsapi
      ```
+   - `NEWSAPI_KEY` es opcional: si no se configura, la sección de noticias simplemente no mostrará resultados.
 
 5. **Ejecutar la aplicación**:
    ```bash
